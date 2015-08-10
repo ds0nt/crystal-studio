@@ -1,0 +1,10 @@
+{
+	"dependencies": {
+		"coffee-script": "~1.9.3",
+		"crystal": "latest"
+	},
+	"main": "main.js",
+	"name": "crystal-studio",
+	"productName": "Crystal Studio",
+	"version": "0.1.0"
+}

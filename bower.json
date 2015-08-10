@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"angular-material": "~0.10.0"
+	},
+	"name": "crystal-studio"
+}

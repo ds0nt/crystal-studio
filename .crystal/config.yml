@@ -1,0 +1,109 @@
+id: crystal.studio
+name: Crystal Studio
+version: 0.1.0
+repository: https://github.com/crystal/crystal-studio
+author:
+  name: Chris Tate
+  email: chris@crystal.sh
+  url: http://crystal.sh
+copyright: 2015 Crystal
+modules:
+  angular.app: v0.1.0
+  authors.file: v0.1.0
+  bower.config: v0.1.0
+  bower.package: v0.1.0
+  electron.app: v0.1.0
+  git.ignore: v0.1.0
+  jade.html: v0.1.0
+  json.stringify: v0.1.0
+  license.mit: v0.1.0
+  npm.package: v0.1.0
+  readme.md: v0.1.0
+imports:
+  angular: angular.app.Generator
+  authors: authors.file.Generator
+  bower-cfg: bower.config.Generator
+  bower-pkg: bower.package.Generator
+  gitignore: git.ignore.Generator
+  json: json.stringify.Transformer
+  license: license.mit.Generator
+  
+  # electron
+  main-gen: electron.app.MainGenerator
+  package-gen: electron.app.PackageGenerator
+
+  npm: npm.package.Generator
+  readme: readme.md.Generator
+  jade-to-html: jade.html.Engine
+outputs:
+  - generator: angular
+    filename: scripts/app.js
+    spec:
+      name: CrystalApp
+      requires:
+        - ngMaterial
+      controllers:
+        AppCtrl:
+          locals:
+            - $scope
+            
+  - generator: authors
+    spec:
+      author: $author
+      name: $name
+      
+  - generator: bower-cfg
+    spec:
+      directory: components
+        
+  - generator: bower-pkg
+    spec:
+      name: crystal-studio
+      dependencies:
+        angular-material: ~0.10.0
+  
+  - generator: gitignore
+    spec:
+      items:
+        - components/
+        - node_modules/
+  
+  - generator: license
+    spec:
+      copyright: $copyright
+  
+  - generator: main-gen
+    spec:
+      enableCrashReporter: true
+      mainTemplate: index.html
+      
+  - generator: package-gen
+    spec:
+      name: crystal-studio
+      version: 0.1.0
+      main: main.js
+      productName: Crystal Studio
+      dependencies:
+        coffee-script: ~1.9.3
+        crystal: latest
+      
+  - engine: jade-to-html
+    filename: index.html
+    template: index.jade
+  
+  - generator: readme
+    spec:
+      name: $name
+      version: $version
+      description: $description
+      
+  #- engine: sass-to-css
+  #  filename: main.scss
+  #  template: style/main.css
+    
+scripts:
+  build:
+    - bower install
+    - npm update
+  run:
+    - electron .
