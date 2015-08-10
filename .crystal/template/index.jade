@@ -1,41 +1,53 @@
 html(ng-app='CrystalApp')
   head
     link(rel='stylesheet', href='components/angular-material/angular-material.min.css')
+    link(rel='stylesheet', href='components/codemirror/lib/codemirror.css')
+    link(rel='stylesheet', href='components/codemirror/theme/mdn-like.css')
     title Crystal Studio
   body(ng-controller='AppCtrl as ctrl')
     md-content
-      md-toolbar
+      md-toolbar(style='background-color: #333')
         div(class='md-toolbar-tools')
-          md-button(class='md-icon-button', aria-label='Settings')
-            md-icon(md-svg-icon='components/angular-material/demos/toolbar/demoBasicUsage/img/icons/menu.svg')
+          //md-menu
+            md-button(class='md-icon-button', aria-label='Open', ng-click='$mdOpenMenu()')
+              md-icon(md-svg-icon='images/open.svg')
+              md-tooltip Open
+            md-menu-content
+              md-menu-item(ng-repeat='value in folders')
+                md-button.
+                  <md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>
+                  {{value}}
           md-button(class='md-icon-button', aria-label='Open', ng-click='openFile()')
             md-icon(md-svg-icon='images/open.svg')
             md-tooltip Open
-          md-button(class='md-icon-button', aria-label='Save')
+          h2
+            span {{dir}}
+          span(flex)
+          md-button(class='md-icon-button', aria-label='Save', ng-click='saveProject()')
             md-icon(md-svg-icon='images/save.svg')
             md-tooltip Save
-          h2
-            span Crystal Studio
-          span(flex)
-          md-button(class='md-icon-button', aria-label='More')
-            md-icon(md-svg-icon='components/angular-material/demos/toolbar/demoBasicUsage/img/icons/more_vert.svg')
-            md-tooltip More
+          md-button(class='md-icon-button', aria-label='Build', ng-click='buildProject()')
+            md-icon(md-svg-icon='images/build.svg')
+            md-tooltip Build
+          md-button(class='md-icon-button', aria-label='Run', ng-click='runProject()')
+            md-icon(md-svg-icon='{{runIcon}}')
+            md-tooltip Run
       md-tabs
         md-tab(label='General')
           md-content(class='md-padding')
             form
               md-input-container
                 label ID
-                input(type='text')
+                input(type='text', value='{{config.id}}')
               md-input-container
                 label Name
-                input(type='text')
+                input(type='text', value='{{config.name}}')
               md-input-container
                 label Version
-                input(type='text')
+                input(type='text', value='{{config.version}}')
               md-input-container
                 label Description
-                textarea(type='text')
+                textarea(type='text', value='{{config.description}}')
         md-tab(label='Modules')
           md-content(class='md-padding')
             h1(class='md-display-2') Modules
@@ -52,12 +64,39 @@ html(ng-app='CrystalApp')
           md-content(class='md-padding')
             h1(class='md-display-2') Outputs
             p Test
+        md-tab(label='Config')
+          md-content(class='md-padding')
+            textarea(id='code')
     script(src='components/angular/angular.min.js')
     script(src='components/angular-animate/angular-animate.min.js')
     script(src='components/angular-aria/angular-aria.min.js')
     script(src='components/angular-material/angular-material.min.js')
+    script(src='components/codemirror/lib/codemirror.js')
+    script(src='components/codemirror/mode/coffeescript/coffeescript.js')
+    script(src='components/codemirror/mode/css/css.js')
+    script(src='components/codemirror/mode/dockerfile/dockerfile.js')
+    script(src='components/codemirror/mode/django/django.js')
+    script(src='components/codemirror/mode/go/go.js')
+    script(src='components/codemirror/mode/haml/haml.js')
+    script(src='components/codemirror/mode/handlebars/handlebars.js')
+    script(src='components/codemirror/mode/jade/jade.js')
+    script(src='components/codemirror/mode/javascript/javascript.js')
+    script(src='components/codemirror/mode/markdown/markdown.js')
+    script(src='components/codemirror/mode/nginx/nginx.js')
+    script(src='components/codemirror/mode/php/php.js')
+    script(src='components/codemirror/mode/puppet/puppet.js')
+    script(src='components/codemirror/mode/python/python.js')
+    script(src='components/codemirror/mode/ruby/ruby.js')
+    script(src='components/codemirror/mode/sass/sass.js')
+    script(src='components/codemirror/mode/shell/shell.js')
+    script(src='components/codemirror/mode/sql/sql.js')
+    script(src='components/codemirror/mode/swift/swift.js')
+    script(src='components/codemirror/mode/xml/xml.js')
+    script(src='components/codemirror/mode/yaml/yaml.js')
+    script(src='components/js-yaml/dist/js-yaml.js')
     script.
       require('coffee-script').register();
       var remote = require('remote');
       var dialog = remote.require('dialog');
+      var crystal = require('/Users/ctate/.crystal/dev/crystal');
     script(src='scripts/app.js')

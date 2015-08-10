@@ -1,7 +1,8 @@
 {
 	"dependencies": {
 		"coffee-script": "~1.9.3",
-		"crystal": "latest"
+		"crystal": "latest",
+		"user-home": "~2.0.0"
 	},
 	"main": "main.js",
 	"name": "crystal-studio",
