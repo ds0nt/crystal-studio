@@ -316,7 +316,7 @@ outputs:
             var remote = require('remote');
             var dialog = remote.require('dialog');
             var shell = remote.require('shell');
-            var crystal = require('/Users/ctate/.crystal/dev/crystal');
+            var crystal = require('crystal');
 
             var Menu = remote.require('menu');
 
