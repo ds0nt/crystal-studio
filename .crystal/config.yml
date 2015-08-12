@@ -224,12 +224,240 @@ outputs:
       
   - engine: jade-to-html
     filename: index.html
-    template: index.jade
-  
-  - engine: jade-to-html
-    filename: welcome.html
-    template: welcome.jade
-  
+    template: |
+      html(ng-app='CrystalApp')
+        head
+          link(rel='stylesheet', href='components/angular-material/angular-material.min.css')
+          link(rel='stylesheet', href='components/codemirror/lib/codemirror.css')
+          link(rel='stylesheet', href='components/codemirror/theme/mdn-like.css')
+          style(type='text/css').
+            md-list-item.selected {
+              background-color: #EEE;
+            }
+
+            .CodeMirror {
+              font-weight: bold;
+              height: 100%;
+            }
+          title Crystal Studio
+        body(id='app-controller', layout='row', ng-controller='AppCtrl as ctrl', resize)
+          md-sidenav(class='md-sidenav-left md-whiteframe-z2', md-component-id='left')
+            md-list(style='padding-top: 0px')
+              md-list-item(ng-repeat='folder in folders', ng-click='loadModule(folder)', ng-class='{selected: folder === selectedFolder}')
+                div {{ folder }}
+                div(flex)
+                md-icon(md-svg-icon='images/running.svg', ng-if='runningModules.indexOf(folder) !== -1')
+          div(layout='column', flex)
+            md-toolbar(style='background-color: #333')
+              div(class='md-toolbar-tools')
+                //md-menu
+                  md-button(class='md-icon-button', aria-label='Open', ng-click='$mdOpenMenu()')
+                    md-icon(md-svg-icon='images/open.svg')
+                    md-tooltip Open
+                  md-menu-content
+                    md-menu-item(ng-repeat='value in folders')
+                      md-button.
+                        <md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>
+                        {{value}}
+                md-button(class='md-icon-button', aria-label='Open', ng-click='openFile()')
+                  md-icon(md-svg-icon='images/open.svg')
+                  md-tooltip Open
+                h2
+                  span {{dir}}
+                span(flex)
+                md-button(class='md-icon-button', aria-label='Save', ng-click='saveProject()')
+                  md-icon(md-svg-icon='images/save.svg')
+                  md-tooltip Save
+                md-button(class='md-icon-button', aria-label='Build', ng-click='buildProject()')
+                  md-icon(md-svg-icon='images/build.svg')
+                  md-tooltip Build
+                md-button(class='md-icon-button', aria-label='Run', ng-click='runProject()')
+                  md-icon(md-svg-icon='{{runIcon}}')
+                  md-tooltip Run
+            md-content(flex)
+              div(ui-codemirror='{ lineNumbers: true, mode: "yaml", theme: "mdn-like" }')
+          script(src='components/angular/angular.min.js')
+          script(src='components/angular-animate/angular-animate.min.js')
+          script(src='components/angular-aria/angular-aria.min.js')
+          script(src='components/angular-material/angular-material.min.js')
+          script(src='components/angular-ui-codemirror/ui-codemirror.js')
+
+          script(src='components/angular-sanitize/angular-sanitize.min.js')
+          script(src='components/tv4/tv4.js')
+          script(src='components/objectpath/lib/ObjectPath.js')
+          script(src='components/angular-schema-form/dist/schema-form.min.js')
+          script(src='components/angular-schema-form/dist/bootstrap-decorator.min.js')
+
+          script(src='components/codemirror/lib/codemirror.js')
+          script(src='components/codemirror/mode/coffeescript/coffeescript.js')
+          script(src='components/codemirror/mode/css/css.js')
+          script(src='components/codemirror/mode/dockerfile/dockerfile.js')
+          script(src='components/codemirror/mode/django/django.js')
+          script(src='components/codemirror/mode/go/go.js')
+          script(src='components/codemirror/mode/haml/haml.js')
+          script(src='components/codemirror/mode/handlebars/handlebars.js')
+          script(src='components/codemirror/mode/jade/jade.js')
+          script(src='components/codemirror/mode/javascript/javascript.js')
+          script(src='components/codemirror/mode/markdown/markdown.js')
+          script(src='components/codemirror/mode/nginx/nginx.js')
+          script(src='components/codemirror/mode/php/php.js')
+          script(src='components/codemirror/mode/puppet/puppet.js')
+          script(src='components/codemirror/mode/python/python.js')
+          script(src='components/codemirror/mode/ruby/ruby.js')
+          script(src='components/codemirror/mode/sass/sass.js')
+          script(src='components/codemirror/mode/shell/shell.js')
+          script(src='components/codemirror/mode/sql/sql.js')
+          script(src='components/codemirror/mode/swift/swift.js')
+          script(src='components/codemirror/mode/xml/xml.js')
+          script(src='components/codemirror/mode/yaml/yaml.js')
+          script(src='components/js-yaml/dist/js-yaml.js')
+          script.
+            require('coffee-script').register();
+            var remote = require('remote');
+            var dialog = remote.require('dialog');
+            var shell = remote.require('shell');
+            var crystal = require('/Users/ctate/.crystal/dev/crystal');
+
+            var Menu = remote.require('menu');
+
+            var template = [
+              {
+                label: 'Crystal',
+                submenu: [
+                  {
+                    label: 'About Crystal',
+                    selector: 'orderFrontStandardAboutPanel:'
+                  },
+                  {
+                    type: 'separator'
+                  },
+                  {
+                    label: 'Hide Crystal',
+                    accelerator: 'Command+H',
+                    selector: 'hide:'
+                  },
+                  {
+                    label: 'Hide Others',
+                    accelerator: 'Command+Shift+H',
+                    selector: 'hideOtherApplications:'
+                  },
+                  {
+                    label: 'Show All',
+                    selector: 'unhideAllApplications:'
+                  },
+                  {
+                    type: 'separator'
+                  },
+                  {
+                    label: 'Quit',
+                    accelerator: 'Command+Q',
+                    selector: 'terminate:'
+                  }
+                ]
+              },
+              {
+                label: 'File',
+                submenu: [
+                  {
+                    label: 'Open',
+                    accelerator: 'Command+O',
+                    click: function() {
+                      angular.element(document.getElementById('app-controller')).scope().openFile();
+                    }
+                  },
+                  {
+                    label: 'Save',
+                    accelerator: 'Command+S',
+                    click: function() {
+                      angular.element(document.getElementById('app-controller')).scope().saveProject();
+                    }
+                  }
+                ]
+              },
+              {
+                label: 'Edit',
+                submenu: [
+                  {
+                    label: 'Undo',
+                    accelerator: 'Command+Z',
+                    selector: 'undo:'
+                  },
+                  {
+                    label: 'Redo',
+                    accelerator: 'Shift+Command+Z',
+                    selector: 'redo:'
+                  },
+                  {
+                    type: 'separator'
+                  },
+                  {
+                    label: 'Cut',
+                    accelerator: 'Command+X',
+                    selector: 'cut:'
+                  },
+                  {
+                    label: 'Copy',
+                    accelerator: 'Command+C',
+                    selector: 'copy:'
+                  },
+                  {
+                    label: 'Paste',
+                    accelerator: 'Command+V',
+                    selector: 'paste:'
+                  },
+                  {
+                    label: 'Select All',
+                    accelerator: 'Command+A',
+                    selector: 'selectAll:'
+                  }
+                ]
+              },
+              {
+                label: 'Project',
+                submenu: [
+                  {
+                    label: 'Build',
+                    accelerator: 'Command+B',
+                    click: function() {
+                      angular.element(document.getElementById('app-controller')).scope().buildProject();
+                    }
+                  },
+                  {
+                    label: 'Run',
+                    accelerator: 'Command+R',
+                    click: function() {
+                      angular.element(document.getElementById('app-controller')).scope().runProject();
+                    }
+                  },
+                  {
+                    label: 'Show In Finder',
+                    click: function() {
+                      shell.showItemInFolder(angular.element(document.getElementById('app-controller')).scope().dir + '/.crystal');
+                    }
+                  }
+                ]
+              },
+              {
+                label: 'View',
+                submenu: [
+                  {
+                    label: 'Reload',
+                    accelerator: 'Command+R',
+                    click: function() { remote.getCurrentWindow().reload(); }
+                  },
+                  {
+                    label: 'Toggle DevTools',
+                    accelerator: 'Alt+Command+I',
+                    click: function() { remote.getCurrentWindow().toggleDevTools(); }
+                  },
+                ]
+              }
+            ];
+
+            var menu = Menu.buildFromTemplate(template);
+            Menu.setApplicationMenu(menu);
+          script(src='scripts/app.js')
+ 
   - generator: readme
     spec:
       name: $name
