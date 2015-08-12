@@ -1,11 +1,158 @@
-<html ng-app="CrystalApp"><head><link rel="stylesheet" href="components/angular-material/angular-material.min.css"/><link rel="stylesheet" href="components/codemirror/lib/codemirror.css"/><link rel="stylesheet" href="components/codemirror/theme/mdn-like.css"/><title>Crystal Studio</title></head><body ng-controller="AppCtrl as ctrl"><md-content><md-toolbar style="background-color: #333"><div class="md-toolbar-tools"><!--md-menumd-button(class='md-icon-button', aria-label='Open', ng-click='$mdOpenMenu()')
+<html ng-app="CrystalApp"><head><link rel="stylesheet" href="components/angular-material/angular-material.min.css"/><link rel="stylesheet" href="components/codemirror/lib/codemirror.css"/><link rel="stylesheet" href="components/codemirror/theme/mdn-like.css"/><style type="text/css">md-list-item.selected {
+  background-color: #EEE;
+}
+
+.CodeMirror {
+  font-weight: bold;
+  height: 100%;
+}</style><title>Crystal Studio</title></head><body id="app-controller" layout="row" ng-controller="AppCtrl as ctrl" resize="resize"><md-sidenav md-component-id="left" class="md-sidenav-left md-whiteframe-z2"><md-list style="padding-top: 0px"><md-list-item ng-repeat="folder in folders" ng-click="loadModule(folder)" ng-class="{selected: folder === selectedFolder}"><div>{{ folder }}</div><div flex="flex"></div><md-icon md-svg-icon="images/running.svg" ng-if="runningModules.indexOf(folder) !== -1"></md-icon></md-list-item></md-list></md-sidenav><div layout="column" flex="flex"><md-toolbar style="background-color: #333"><div class="md-toolbar-tools"><!--md-menumd-button(class='md-icon-button', aria-label='Open', ng-click='$mdOpenMenu()')
   md-icon(md-svg-icon='images/open.svg')
   md-tooltip Open
 md-menu-content
   md-menu-item(ng-repeat='value in folders')
     md-button.
       <md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>
-      {{value}}--><md-button aria-label="Open" ng-click="openFile()" class="md-icon-button"><md-icon md-svg-icon="images/open.svg"></md-icon><md-tooltip>Open</md-tooltip></md-button><h2><span>{{dir}}</span></h2><span flex="flex"></span><md-button aria-label="Save" ng-click="saveProject()" class="md-icon-button"><md-icon md-svg-icon="images/save.svg"></md-icon><md-tooltip>Save</md-tooltip></md-button><md-button aria-label="Build" ng-click="buildProject()" class="md-icon-button"><md-icon md-svg-icon="images/build.svg"></md-icon><md-tooltip>Build</md-tooltip></md-button><md-button aria-label="Run" ng-click="runProject()" class="md-icon-button"><md-icon md-svg-icon="{{runIcon}}"></md-icon><md-tooltip>Run</md-tooltip></md-button></div></md-toolbar><md-tabs><md-tab label="General"><md-content class="md-padding"><form><md-input-container><label>ID</label><input type="text" value="{{config.id}}"/></md-input-container><md-input-container><label>Name</label><input type="text" value="{{config.name}}"/></md-input-container><md-input-container><label>Version</label><input type="text" value="{{config.version}}"/></md-input-container><md-input-container><label>Description</label><textarea type="text" value="{{config.description}}"></textarea></md-input-container></form></md-content></md-tab><md-tab label="Modules"><md-content class="md-padding"><h1 class="md-display-2">Modules</h1><p>Test</p></md-content></md-tab><md-tab label="Imports"><md-content class="md-padding"><h1 class="md-display-2">Imports</h1><p>Test</p></md-content></md-tab><md-tab label="Exports"><md-content class="md-padding"><h1 class="md-display-2">Exports</h1><p>Test</p></md-content></md-tab><md-tab label="Outputs"><md-content class="md-padding"><h1 class="md-display-2">Outputs</h1><p>Test</p></md-content></md-tab><md-tab label="Config"><md-content class="md-padding"><textarea id="code"></textarea></md-content></md-tab></md-tabs></md-content><script src="components/angular/angular.min.js"></script><script src="components/angular-animate/angular-animate.min.js"></script><script src="components/angular-aria/angular-aria.min.js"></script><script src="components/angular-material/angular-material.min.js"></script><script src="components/codemirror/lib/codemirror.js"></script><script src="components/codemirror/mode/coffeescript/coffeescript.js"></script><script src="components/codemirror/mode/css/css.js"></script><script src="components/codemirror/mode/dockerfile/dockerfile.js"></script><script src="components/codemirror/mode/django/django.js"></script><script src="components/codemirror/mode/go/go.js"></script><script src="components/codemirror/mode/haml/haml.js"></script><script src="components/codemirror/mode/handlebars/handlebars.js"></script><script src="components/codemirror/mode/jade/jade.js"></script><script src="components/codemirror/mode/javascript/javascript.js"></script><script src="components/codemirror/mode/markdown/markdown.js"></script><script src="components/codemirror/mode/nginx/nginx.js"></script><script src="components/codemirror/mode/php/php.js"></script><script src="components/codemirror/mode/puppet/puppet.js"></script><script src="components/codemirror/mode/python/python.js"></script><script src="components/codemirror/mode/ruby/ruby.js"></script><script src="components/codemirror/mode/sass/sass.js"></script><script src="components/codemirror/mode/shell/shell.js"></script><script src="components/codemirror/mode/sql/sql.js"></script><script src="components/codemirror/mode/swift/swift.js"></script><script src="components/codemirror/mode/xml/xml.js"></script><script src="components/codemirror/mode/yaml/yaml.js"></script><script src="components/js-yaml/dist/js-yaml.js"></script><script>require('coffee-script').register();
+      {{value}}--><md-button aria-label="Open" ng-click="openFile()" class="md-icon-button"><md-icon md-svg-icon="images/open.svg"></md-icon><md-tooltip>Open</md-tooltip></md-button><h2><span>{{dir}}</span></h2><span flex="flex"></span><md-button aria-label="Save" ng-click="saveProject()" class="md-icon-button"><md-icon md-svg-icon="images/save.svg"></md-icon><md-tooltip>Save</md-tooltip></md-button><md-button aria-label="Build" ng-click="buildProject()" class="md-icon-button"><md-icon md-svg-icon="images/build.svg"></md-icon><md-tooltip>Build</md-tooltip></md-button><md-button aria-label="Run" ng-click="runProject()" class="md-icon-button"><md-icon md-svg-icon="{{runIcon}}"></md-icon><md-tooltip>Run</md-tooltip></md-button></div></md-toolbar><md-content flex="flex"><div ui-codemirror="{ lineNumbers: true, mode: &quot;yaml&quot;, theme: &quot;mdn-like&quot; }"></div></md-content></div><script src="components/angular/angular.min.js"></script><script src="components/angular-animate/angular-animate.min.js"></script><script src="components/angular-aria/angular-aria.min.js"></script><script src="components/angular-material/angular-material.min.js"></script><script src="components/angular-ui-codemirror/ui-codemirror.js"></script><script src="components/angular-sanitize/angular-sanitize.min.js"></script><script src="components/tv4/tv4.js"></script><script src="components/objectpath/lib/ObjectPath.js"></script><script src="components/angular-schema-form/dist/schema-form.min.js"></script><script src="components/angular-schema-form/dist/bootstrap-decorator.min.js"></script><script src="components/codemirror/lib/codemirror.js"></script><script src="components/codemirror/mode/coffeescript/coffeescript.js"></script><script src="components/codemirror/mode/css/css.js"></script><script src="components/codemirror/mode/dockerfile/dockerfile.js"></script><script src="components/codemirror/mode/django/django.js"></script><script src="components/codemirror/mode/go/go.js"></script><script src="components/codemirror/mode/haml/haml.js"></script><script src="components/codemirror/mode/handlebars/handlebars.js"></script><script src="components/codemirror/mode/jade/jade.js"></script><script src="components/codemirror/mode/javascript/javascript.js"></script><script src="components/codemirror/mode/markdown/markdown.js"></script><script src="components/codemirror/mode/nginx/nginx.js"></script><script src="components/codemirror/mode/php/php.js"></script><script src="components/codemirror/mode/puppet/puppet.js"></script><script src="components/codemirror/mode/python/python.js"></script><script src="components/codemirror/mode/ruby/ruby.js"></script><script src="components/codemirror/mode/sass/sass.js"></script><script src="components/codemirror/mode/shell/shell.js"></script><script src="components/codemirror/mode/sql/sql.js"></script><script src="components/codemirror/mode/swift/swift.js"></script><script src="components/codemirror/mode/xml/xml.js"></script><script src="components/codemirror/mode/yaml/yaml.js"></script><script src="components/js-yaml/dist/js-yaml.js"></script><script>require('coffee-script').register();
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var crystal = require('/Users/ctate/.crystal/dev/crystal');</script><script src="scripts/app.js"></script></body></html>
+var shell = remote.require('shell');
+var crystal = require('/Users/ctate/.crystal/dev/crystal');
+
+var Menu = remote.require('menu');
+
+var template = [
+  {
+    label: 'Crystal',
+    submenu: [
+      {
+        label: 'About Crystal',
+        selector: 'orderFrontStandardAboutPanel:'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Hide Crystal',
+        accelerator: 'Command+H',
+        selector: 'hide:'
+      },
+      {
+        label: 'Hide Others',
+        accelerator: 'Command+Shift+H',
+        selector: 'hideOtherApplications:'
+      },
+      {
+        label: 'Show All',
+        selector: 'unhideAllApplications:'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        selector: 'terminate:'
+      }
+    ]
+  },
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open',
+        accelerator: 'Command+O',
+        click: function() {
+          angular.element(document.getElementById('app-controller')).scope().openFile();
+        }
+      },
+      {
+        label: 'Save',
+        accelerator: 'Command+S',
+        click: function() {
+          angular.element(document.getElementById('app-controller')).scope().saveProject();
+        }
+      }
+    ]
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      {
+        label: 'Undo',
+        accelerator: 'Command+Z',
+        selector: 'undo:'
+      },
+      {
+        label: 'Redo',
+        accelerator: 'Shift+Command+Z',
+        selector: 'redo:'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Cut',
+        accelerator: 'Command+X',
+        selector: 'cut:'
+      },
+      {
+        label: 'Copy',
+        accelerator: 'Command+C',
+        selector: 'copy:'
+      },
+      {
+        label: 'Paste',
+        accelerator: 'Command+V',
+        selector: 'paste:'
+      },
+      {
+        label: 'Select All',
+        accelerator: 'Command+A',
+        selector: 'selectAll:'
+      }
+    ]
+  },
+  {
+    label: 'Project',
+    submenu: [
+      {
+        label: 'Build',
+        accelerator: 'Command+B',
+        click: function() {
+          angular.element(document.getElementById('app-controller')).scope().buildProject();
+        }
+      },
+      {
+        label: 'Run',
+        accelerator: 'Command+R',
+        click: function() {
+          angular.element(document.getElementById('app-controller')).scope().runProject();
+        }
+      },
+      {
+        label: 'Show In Finder',
+        click: function() {
+          shell.showItemInFolder(angular.element(document.getElementById('app-controller')).scope().dir + '/.crystal');
+        }
+      }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      {
+        label: 'Reload',
+        accelerator: 'Command+R',
+        click: function() { remote.getCurrentWindow().reload(); }
+      },
+      {
+        label: 'Toggle DevTools',
+        accelerator: 'Alt+Command+I',
+        click: function() { remote.getCurrentWindow().toggleDevTools(); }
+      },
+    ]
+  }
+];
+
+var menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);</script><script src="scripts/app.js"></script></body></html>

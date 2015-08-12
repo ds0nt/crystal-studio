@@ -1,6 +1,8 @@
 {
 	"dependencies": {
 		"angular-material": "~0.10.0",
+		"angular-schema-form": "~0.8.4",
+		"angular-ui-codemirror": "~0.3.0",
 		"codemirror": "~5.5.0",
 		"js-yaml": "~3.3.1"
 	},

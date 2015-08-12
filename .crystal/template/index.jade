@@ -3,9 +3,24 @@ html(ng-app='CrystalApp')
     link(rel='stylesheet', href='components/angular-material/angular-material.min.css')
     link(rel='stylesheet', href='components/codemirror/lib/codemirror.css')
     link(rel='stylesheet', href='components/codemirror/theme/mdn-like.css')
+    style(type='text/css').
+      md-list-item.selected {
+        background-color: #EEE;
+      }
+      
+      .CodeMirror {
+        font-weight: bold;
+        height: 100%;
+      }
     title Crystal Studio
-  body(ng-controller='AppCtrl as ctrl')
-    md-content
+  body(id='app-controller', layout='row', ng-controller='AppCtrl as ctrl', resize)
+    md-sidenav(class='md-sidenav-left md-whiteframe-z2', md-component-id='left')
+      md-list(style='padding-top: 0px')
+        md-list-item(ng-repeat='folder in folders', ng-click='loadModule(folder)', ng-class='{selected: folder === selectedFolder}')
+          div {{ folder }}
+          div(flex)
+          md-icon(md-svg-icon='images/running.svg', ng-if='runningModules.indexOf(folder) !== -1')
+    div(layout='column', flex)
       md-toolbar(style='background-color: #333')
         div(class='md-toolbar-tools')
           //md-menu
@@ -32,45 +47,20 @@ html(ng-app='CrystalApp')
           md-button(class='md-icon-button', aria-label='Run', ng-click='runProject()')
             md-icon(md-svg-icon='{{runIcon}}')
             md-tooltip Run
-      md-tabs
-        md-tab(label='General')
-          md-content(class='md-padding')
-            form
-              md-input-container
-                label ID
-                input(type='text', value='{{config.id}}')
-              md-input-container
-                label Name
-                input(type='text', value='{{config.name}}')
-              md-input-container
-                label Version
-                input(type='text', value='{{config.version}}')
-              md-input-container
-                label Description
-                textarea(type='text', value='{{config.description}}')
-        md-tab(label='Modules')
-          md-content(class='md-padding')
-            h1(class='md-display-2') Modules
-            p Test
-        md-tab(label='Imports')
-          md-content(class='md-padding')
-            h1(class='md-display-2') Imports
-            p Test
-        md-tab(label='Exports')
-          md-content(class='md-padding')
-            h1(class='md-display-2') Exports
-            p Test
-        md-tab(label='Outputs')
-          md-content(class='md-padding')
-            h1(class='md-display-2') Outputs
-            p Test
-        md-tab(label='Config')
-          md-content(class='md-padding')
-            textarea(id='code')
+      md-content(flex)
+        div(ui-codemirror='{ lineNumbers: true, mode: "yaml", theme: "mdn-like" }')
     script(src='components/angular/angular.min.js')
     script(src='components/angular-animate/angular-animate.min.js')
     script(src='components/angular-aria/angular-aria.min.js')
     script(src='components/angular-material/angular-material.min.js')
+    script(src='components/angular-ui-codemirror/ui-codemirror.js')
+      
+    script(src='components/angular-sanitize/angular-sanitize.min.js')
+    script(src='components/tv4/tv4.js')
+    script(src='components/objectpath/lib/ObjectPath.js')
+    script(src='components/angular-schema-form/dist/schema-form.min.js')
+    script(src='components/angular-schema-form/dist/bootstrap-decorator.min.js')
+      
     script(src='components/codemirror/lib/codemirror.js')
     script(src='components/codemirror/mode/coffeescript/coffeescript.js')
     script(src='components/codemirror/mode/css/css.js')
@@ -98,5 +88,145 @@ html(ng-app='CrystalApp')
       require('coffee-script').register();
       var remote = require('remote');
       var dialog = remote.require('dialog');
+      var shell = remote.require('shell');
       var crystal = require('/Users/ctate/.crystal/dev/crystal');
+      
+      var Menu = remote.require('menu');
+      
+      var template = [
+        {
+          label: 'Crystal',
+          submenu: [
+            {
+              label: 'About Crystal',
+              selector: 'orderFrontStandardAboutPanel:'
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Hide Crystal',
+              accelerator: 'Command+H',
+              selector: 'hide:'
+            },
+            {
+              label: 'Hide Others',
+              accelerator: 'Command+Shift+H',
+              selector: 'hideOtherApplications:'
+            },
+            {
+              label: 'Show All',
+              selector: 'unhideAllApplications:'
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Quit',
+              accelerator: 'Command+Q',
+              selector: 'terminate:'
+            }
+          ]
+        },
+        {
+          label: 'File',
+          submenu: [
+            {
+              label: 'Open',
+              accelerator: 'Command+O',
+              click: function() {
+                angular.element(document.getElementById('app-controller')).scope().openFile();
+              }
+            },
+            {
+              label: 'Save',
+              accelerator: 'Command+S',
+              click: function() {
+                angular.element(document.getElementById('app-controller')).scope().saveProject();
+              }
+            }
+          ]
+        },
+        {
+          label: 'Edit',
+          submenu: [
+            {
+              label: 'Undo',
+              accelerator: 'Command+Z',
+              selector: 'undo:'
+            },
+            {
+              label: 'Redo',
+              accelerator: 'Shift+Command+Z',
+              selector: 'redo:'
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Cut',
+              accelerator: 'Command+X',
+              selector: 'cut:'
+            },
+            {
+              label: 'Copy',
+              accelerator: 'Command+C',
+              selector: 'copy:'
+            },
+            {
+              label: 'Paste',
+              accelerator: 'Command+V',
+              selector: 'paste:'
+            },
+            {
+              label: 'Select All',
+              accelerator: 'Command+A',
+              selector: 'selectAll:'
+            }
+          ]
+        },
+        {
+          label: 'Project',
+          submenu: [
+            {
+              label: 'Build',
+              accelerator: 'Command+B',
+              click: function() {
+                angular.element(document.getElementById('app-controller')).scope().buildProject();
+              }
+            },
+            {
+              label: 'Run',
+              accelerator: 'Command+R',
+              click: function() {
+                angular.element(document.getElementById('app-controller')).scope().runProject();
+              }
+            },
+            {
+              label: 'Show In Finder',
+              click: function() {
+                shell.showItemInFolder(angular.element(document.getElementById('app-controller')).scope().dir + '/.crystal');
+              }
+            }
+          ]
+        },
+        {
+          label: 'View',
+          submenu: [
+            {
+              label: 'Reload',
+              accelerator: 'Command+R',
+              click: function() { remote.getCurrentWindow().reload(); }
+            },
+            {
+              label: 'Toggle DevTools',
+              accelerator: 'Alt+Command+I',
+              click: function() { remote.getCurrentWindow().toggleDevTools(); }
+            },
+          ]
+        }
+      ];
+      
+      var menu = Menu.buildFromTemplate(template);
+      Menu.setApplicationMenu(menu);
     script(src='scripts/app.js')
