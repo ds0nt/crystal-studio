@@ -1,3 +1,3 @@
-# Crystal Studio 0.1.0
+# Crystal Studio 
 
-$description
+official desktop suite of [Crystal](http://crystal.sh)

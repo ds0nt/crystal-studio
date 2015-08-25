@@ -1,42 +1,23 @@
-id: crystal.studio
 name: Crystal Studio
-version: 0.1.0
-repository: https://github.com/crystal/crystal-studio
+description: official desktop suite of [Crystal](http://crystal.sh)
 author:
   name: Chris Tate
   email: chris@crystal.sh
   url: http://crystal.sh
 copyright: 2015 Crystal
 modules:
-  angular.app: v0.1.0
-  authors.file: v0.1.0
-  bower.config: v0.1.0
-  bower.package: v0.1.0
-  electron.app: v0.1.0
-  git.ignore: v0.1.0
-  jade.html: v0.1.0
-  json.stringify: v0.1.0
-  license.mit: v0.1.0
-  npm.package: v0.1.0
-  readme.md: v0.1.0
-imports:
-  angular: angular.app.Generator
-  authors: authors.file.Generator
-  bower-cfg: bower.config.Generator
-  bower-pkg: bower.package.Generator
-  gitignore: git.ignore.Generator
-  json: json.stringify.Transformer
-  license: license.mit.Generator
-  
-  # electron
-  main-gen: electron.app.MainGenerator
-  package-gen: electron.app.PackageGenerator
-
-  npm: npm.package.Generator
-  readme: readme.md.Generator
-  jade-to-html: jade.html.Engine
+  crystal/angular: ~0.1.0
+  crystal/authors: ~0.2.5
+  crystal/bower: ~0.3.5
+  crystal/electron: ~0.1.1
+  crystal/gitignore: ~0.1.1
+  crystal/jade: ~0.1.0
+  crystal/json: ~0.3.2
+  crystal/license: ~0.2.4
+  crystal/npm: ~0.2.5
+  crystal/readme: ~0.2.2
 outputs:
-  - generator: angular
+  - generator: angular.AppGenerator
     filename: scripts/app.js
     spec:
       name: CrystalApp
@@ -170,16 +151,16 @@ outputs:
                   var config = document.getElementsByClassName('CodeMirror')[0].CodeMirror.getDoc().getValue();
                   fs.writeFileSync($scope.dir + '/.crystal/config.yml', config);
                 }
-  - generator: authors
+  - generator: authors.AuthorsGenerator
     spec:
       author: $author
       name: $name
       
-  - generator: bower-cfg
+  - generator: bower.ConfigGenerator
     spec:
       directory: components
         
-  - generator: bower-pkg
+  - generator: bower.PackageGenerator
     spec:
       name: crystal-studio
       dependencies:
@@ -189,18 +170,18 @@ outputs:
         codemirror: ~5.5.0
         js-yaml: ~3.3.1
   
-  - generator: gitignore
+  - generator: gitignore.GitignoreGenerator
     spec:
       items:
         - components/
         - dist/
         - node_modules/
   
-  - generator: license
+  - generator: license.MITGenerator
     spec:
       copyright: $copyright
   
-  - generator: main-gen
+  - generator: electron.MainGenerator
     spec:
       enableCrashReporter: true
       #enableDevTools: true
@@ -211,7 +192,7 @@ outputs:
           url:
             file: index.html
       
-  - generator: package-gen
+  - generator: electron.PackageGenerator
     spec:
       name: crystal-studio
       version: 0.1.0
@@ -222,7 +203,7 @@ outputs:
         crystal: latest
         user-home: ~2.0.0
       
-  - engine: jade-to-html
+  - engine: jade.JadeEngine
     filename: index.html
     template: |
       html(ng-app='CrystalApp')
@@ -261,19 +242,19 @@ outputs:
                         {{value}}
                 md-button(class='md-icon-button', aria-label='Open', ng-click='openFile()')
                   md-icon(md-svg-icon='images/open.svg')
-                  md-tooltip Open
+                  md-tooltip Open (Cmd + O)
                 h2
                   span {{dir}}
                 span(flex)
                 md-button(class='md-icon-button', aria-label='Save', ng-click='saveProject()')
                   md-icon(md-svg-icon='images/save.svg')
-                  md-tooltip Save
+                  md-tooltip Save (Cmd + S)
                 md-button(class='md-icon-button', aria-label='Build', ng-click='buildProject()')
                   md-icon(md-svg-icon='images/build.svg')
-                  md-tooltip Build
+                  md-tooltip Build (Cmd + B)
                 md-button(class='md-icon-button', aria-label='Run', ng-click='runProject()')
                   md-icon(md-svg-icon='{{runIcon}}')
-                  md-tooltip Run
+                  md-tooltip Run (Cmd + R)
             md-content(flex)
               div(ui-codemirror='{ lineNumbers: true, mode: "yaml", theme: "mdn-like" }')
           script(src='components/angular/angular.min.js')
@@ -458,10 +439,9 @@ outputs:
             Menu.setApplicationMenu(menu);
           script(src='scripts/app.js')
  
-  - generator: readme
+  - generator: readme.ReadmeGenerator
     spec:
       name: $name
-      version: $version
       description: $description
       
   #- engine: sass-to-css
