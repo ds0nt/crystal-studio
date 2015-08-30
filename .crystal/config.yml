@@ -1,11 +1,12 @@
 name: Crystal Studio
-description: official desktop suite of [Crystal](http://crystal.sh)
+description: CLI of [Crystal](https://crystal.sh), the open source code generator for every language and framework
+version: 0.1.0
 author:
   name: Chris Tate
   email: chris@crystal.sh
   url: http://crystal.sh
 copyright: 2015 Crystal
-modules:
+imports:
   crystal/angular: ~0.1.0
   crystal/authors: ~0.2.5
   crystal/bower: ~0.3.5
@@ -195,7 +196,7 @@ outputs:
   - generator: electron.PackageGenerator
     spec:
       name: crystal-studio
-      version: 0.1.0
+      version: $version
       main: main.js
       productName: Crystal Studio
       dependencies:
@@ -443,11 +444,22 @@ outputs:
     spec:
       name: $name
       description: $description
-      
-  #- engine: sass-to-css
-  #  filename: main.scss
-  #  template: style/main.css
-    
+      sections:
+        - title: Install
+          content: |
+            Use npm to install Crystal Studio:
+            
+            ```sh
+            npm install crystal-studio
+            ```
+        - title: Run
+          content: |
+            Use Crystal to run Crystal Studio:
+            
+            ```sh
+            cd /path/to/crystal-studio
+            crystal run
+            ```
 scripts:
   build:
     - bower install
