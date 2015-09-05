@@ -2,6 +2,9 @@
 	"dependencies": {
 		"coffee-script": "~1.9.3",
 		"crystal": "latest",
+		"gift": "~0.6.1",
+		"query-string": "~2.3.0",
+		"request": "~2.61.0",
 		"user-home": "~2.0.0"
 	},
 	"main": "main.js",

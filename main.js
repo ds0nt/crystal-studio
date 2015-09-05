@@ -1,12 +1,15 @@
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var globalShortcut = require('global-shortcut');
+var query = require('query-string');
+var request = require('request');
 
 // Report crashes to our server.
 require('crash-reporter').start();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is GCed.
+var loginWindow = null;
 var mainWindow = null;
 
 // Quit when all windows are closed.
@@ -28,6 +31,7 @@ app.on('ready', function() {
     title: ''
   });
   mainWindow.maximize();
+
 
   // and load the index.html of the app.
   mainWindow.loadUrl('file://' + __dirname + '/index.html');
