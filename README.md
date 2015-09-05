@@ -7,22 +7,22 @@
 [![Crystal Studio](https://img.shields.io/badge/crystal-studio-9b30ff.svg?style=flat-square)](https://github.com/crystal/crystal-studio)
 [![Crystal Web](https://img.shields.io/badge/crystal-web-lightgrey.svg?style=flat-square)](https://github.com/crystal/crystal-web)
 
-CLI of [Crystal](https://crystal.sh), the open source code generator for every language and framework
+GUI of [Crystal](https://crystal.sh), the open source code generator for every language and framework
 
 # Install
 
-Use npm to install Crystal Studio:
+Clone from GitHub:
 
 ```sh
-npm install crystal-studio
+git clone https://github.com/crystal/crystal-studio
 ```
 
 # Run
 
-Use Crystal to run Crystal Studio:
+Use [Crystal CLI](https://github.com/crystal/crystal-cli) to run Crystal Studio:
 
 ```sh
-cd /path/to/crystal-studio
+cd crystal/crystal-studio
 crystal run
 ```
 
